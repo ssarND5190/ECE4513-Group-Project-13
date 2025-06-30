@@ -8,7 +8,7 @@ def nothing(x):
 # Dot initial position (center of img_tex_show)
 dot_radius = 8
 dot1_color = (255, 144, 55)
-dot1_pos = [255,255]
+dot1_pos = [128,128]
 dragging1 = False
 
 def mouse_callback(event, x, y, flags, param):
@@ -25,12 +25,13 @@ def mouse_callback(event, x, y, flags, param):
     elif event == cv2.EVENT_LBUTTONUP:
         dragging1 = False
 
-def display_images(img1, img2):
-    height = max(img1.shape[0], img2.shape[0])
-    width = img1.shape[1] + img2.shape[1]
+def display_images(img1, img2, img3):
+    height = max(img1.shape[0], img2.shape[0], img3.shape[0])
+    width = img1.shape[1] + img2.shape[1] + img3.shape[1]
     combined_image = np.zeros((height, width, 3), dtype=np.uint8)
     combined_image[:img1.shape[0], :img1.shape[1]] = img1
-    combined_image[:img2.shape[0], img1.shape[1]:] = img2
+    combined_image[:img2.shape[0], img1.shape[1]:img1.shape[1] + img2.shape[1]] = img2
+    combined_image[:img3.shape[0], img1.shape[1] + img2.shape[1]:] = img3
     # Draw the dot on the combined image
     cv2.circle(combined_image, (dot1_pos[0], dot1_pos[1]), dot_radius, dot1_color, -1)
     cv2.imshow('window', combined_image)
