@@ -10,20 +10,20 @@ cv2.namedWindow('window')
 img_src = cv2.imread('./img.png')
 src_x = img_src.shape[1]
 src_y = img_src.shape[0]
-src_zoom = 256.0 / src_x
+src_zoom = 360.0 / src_x
 print(src_x,src_zoom,src_y)
 img_src_show = cv2.resize(img_src, (int(src_x * src_zoom), int(src_y * src_zoom)), interpolation=cv2.INTER_CUBIC)
 # Texture Image
 tex_x = 512
 tex_y = 512
 img_tex = np.zeros((tex_x,tex_y,3),np.uint8)
-tex_zoom = 256.0 / tex_x
+tex_zoom = 360.0 / tex_x
 img_tex_show = cv2.resize(img_tex, (int(tex_x * tex_zoom), int(tex_y * tex_zoom)), interpolation=cv2.INTER_CUBIC)
 # Normal Map
 normal_x = 512
 normal_y = 512
 img_normal = np.zeros((normal_x,normal_y,3),np.uint8)
-normal_zoom = 256.0 / normal_x
+normal_zoom = 360.0 / normal_x
 img_normal_show = cv2.resize(img_normal, (int(normal_x * normal_zoom), int(normal_y * normal_zoom)), interpolation=cv2.INTER_CUBIC)
 
 canProcess = False
