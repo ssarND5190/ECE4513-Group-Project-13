@@ -48,6 +48,8 @@ def processImage():
     pass
 
 while True:
+    if cv2.getWindowProperty('window', cv2.WND_PROP_VISIBLE) < 1:
+        break
     if canProcess:
         processImage()
         print(UI.dot1_pos)
