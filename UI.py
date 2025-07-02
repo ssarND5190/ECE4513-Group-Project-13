@@ -6,24 +6,19 @@ def nothing(x):
     pass
 
 # Dot initial position (center of img_tex_show)
+dots_pos = []  # List to store positions of dots
 dot_radius = 8
-dot1_color = (255, 144, 55)
-dot1_pos = [128,128]
-dragging1 = False
+dot_color = [(255, 144, 55), (0, 255, 0), (0, 0, 255), (255, 0, 0)]  # Different colors for different dots
 
 def mouse_callback(event, x, y, flags, param):
-    global dot1_pos, dragging1
     if event == cv2.EVENT_LBUTTONDOWN:
-        # Check if click is within the dot
-        if (x - dot1_pos[0]) ** 2 + (y - dot1_pos[1]) ** 2 <= dot_radius ** 2:
-            dragging1 = True
-    elif event == cv2.EVENT_MOUSEMOVE:
-        if dragging1:
-            # Only allow moving inside the tex image area
-            if x >= 0 and x < 480 and y >= 0 and y < 480:
-                dot1_pos = [x, y]
-    elif event == cv2.EVENT_LBUTTONUP:
-        dragging1 = False
+        if len(dots_pos) < 4:
+            dots_pos.append([x, y])
+        elif len(dots_pos) == 4:  # If already reached max dots, do not add more
+            print("You have already marked the maximum number of points.")
+    elif event == cv2.EVENT_RBUTTONDOWN:
+        # Clear all points when right-clicked
+        dots_pos.clear()
 
 def display_images(img1, img2, img3):
     height = max(img1.shape[0], img2.shape[0], img3.shape[0])
@@ -33,5 +28,6 @@ def display_images(img1, img2, img3):
     combined_image[:img2.shape[0], img1.shape[1]:img1.shape[1] + img2.shape[1]] = img2
     combined_image[:img3.shape[0], img1.shape[1] + img2.shape[1]:] = img3
     # Draw the dot on the combined image
-    cv2.circle(combined_image, (dot1_pos[0], dot1_pos[1]), dot_radius, dot1_color, -1)
+    for i, pos in enumerate(dots_pos):
+        cv2.circle(combined_image, (pos[0], pos[1]), dot_radius, dot_color[i % len(dot_color)], -1)
     cv2.imshow('window', combined_image)
