@@ -32,7 +32,7 @@ def filter1(img, radius):
 
 def filter2(img, radius):
     output = np.zeros_like(img)
-    blured = cv2.GaussianBlur(img, (radius*2+1, radius*2+1), 0)
+    blured = cv2.medianBlur(img, radius*2+1, 0)
     positive = np.zeros_like(img)
     negative = np.zeros_like(img)
     average = [0.0, 0.0, 0.0]
@@ -59,7 +59,8 @@ def filter2(img, radius):
 
 def filter3(img, radius):
     output = np.zeros_like(img)
-    blured = cv2.medianBlur(img, radius*2+1, 0)
+    guide = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    blured = cv2.ximgproc.guidedFilter(guide, img, 8, 50, dDepth=-1)
     positive = np.zeros_like(img)
     negative = np.zeros_like(img)
     average = [0.0, 0.0, 0.0]
@@ -82,7 +83,7 @@ def filter3(img, radius):
                     output[i, j][k] = 255
     print(average)
     #process Image here
-    return output
+    return blured
 
 # Optimized version of filter4 using vectorized operations and efficient filtering
 def filter4(img, gs_radius):
