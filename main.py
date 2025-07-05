@@ -38,6 +38,9 @@ cv2.createTrackbar('bar3','window',0,255,UI.nothing)
 
 def processImage():
     global img_src, img_tex, img_normal, tex_zoom
+    value1 = cv2.getTrackbarPos('bar1','window')
+    value2 = cv2.getTrackbarPos('bar2','window')
+    value3 = cv2.getTrackbarPos('bar3','window')
 
     if len(UI.dots_pos) == 4:
         # 将UI.dots_pos中的点从展示图像坐标反向映射回原图坐标
@@ -61,8 +64,8 @@ def processImage():
         # 应用透视变换到原始图像上，输出大小设置为512x512
         warped = cv2.warpPerspective(img_src, M, (512, 512))
 
-        # 后面应该还要filter？img_tex = filters * warped 这里暂时直接用warped
-        img_tex = warped
+        # 把视角转换后的纹理用filer进行光照归一化
+        img_tex = filter.filter4(warped, value1)
 
 
         # 内部纹理处理时，我们用的是512像素，输出前要压缩一下，这里计算压缩率
