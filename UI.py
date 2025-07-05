@@ -10,12 +10,35 @@ dots_pos = []  # List to store positions of dots
 dot_radius = 8
 dot_color = [(255, 144, 55), (0, 255, 0), (0, 0, 255), (255, 0, 0)]  # Different colors for different dots
 
-def mouse_callback(event, x, y, flags, param):
+def mouse_callback(event, x, y, flag, param):
     if event == cv2.EVENT_LBUTTONDOWN:
-        if len(dots_pos) < 4:
+        if x < 0 or x >= 360: #只允许在第一张图的宽度360内点击
+            print("You can only select points on the left image.")
+            return
+
+        # 检查点数量
+        if len(dots_pos) < 3:
             dots_pos.append([x, y])
-        elif len(dots_pos) == 4:  # If already reached max dots, do not add more
-            print("You have already marked the maximum number of points.")
+        elif len(dots_pos) == 3:
+            temp_dots = dots_pos + [[x, y]]
+            # 构建一个临时点列表，检查所有4个点是否都合法（即不在其它三点构成的三角形内或三角形的边上）
+            valid = True
+            for i in range(4): #每个点都要查
+                others = [tuple(pt) for j, pt in enumerate(temp_dots) if j != i]
+                point = tuple(temp_dots[i])
+                triangle = np.array(others, dtype=np.float32)
+
+                is_inside = cv2.pointPolygonTest(triangle, point, False)
+                if is_inside >= 0: #点在形内/形上
+                    print(f"Error: Point {i+1} is inside the triangle formed by the other three.")
+                    valid = False
+                    break
+            if valid:
+                dots_pos.append([x, y])
+            else:
+                print("The selected points are invalid. You can reselect the last point or right-click to reset all points.")
+        else:
+            print("You have already selected four points. Press the space bar to start image processing. Right-click to reset.")
     elif event == cv2.EVENT_RBUTTONDOWN:
         # Clear all points when right-clicked
         dots_pos.clear()
