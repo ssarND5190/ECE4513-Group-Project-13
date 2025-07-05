@@ -50,7 +50,6 @@ def processImage():
 while True:
     if canProcess:
         processImage()
-        print(UI.dot1_pos)
         canProcess = False
     img_tex_show = cv2.resize(img_tex, (int(tex_x * tex_zoom), int(tex_y * tex_zoom)), interpolation=cv2.INTER_CUBIC)
     img_normal_show = cv2.resize(img_normal, (int(normal_x * normal_zoom), int(normal_y * normal_zoom)), interpolation=cv2.INTER_CUBIC)
