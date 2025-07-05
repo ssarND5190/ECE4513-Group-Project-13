@@ -70,6 +70,10 @@ def generate_normal_map(img, strength = 3.0):
     normal_map = cv2.merge((normals[:,:,2], normals[:,:,1], normals[:,:,0]))
     return normal_map
 
+def getNormal(img):
+    normal_map = generate_normal_map(img)
+    return normal_map
+
 # if __name__ == "__main__":
 #     img = cv2.imread('/Users/sarahlu/Desktop/CVData/brick2_original.png', cv2.IMREAD_GRAYSCALE)
 #     cv2.imshow("Low Pass", img)
