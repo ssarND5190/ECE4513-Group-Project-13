@@ -71,8 +71,9 @@ def generate_normal_map(img, strength = 3.0):
     return normal_map
 
 def getNormal(img):
-    normal_map = generate_normal_map(img)
-    return normal_map
+    img = High_Pass_Filter(img)
+    img = generate_normal_map(img)
+    return img
 
 # if __name__ == "__main__":
 #     img = cv2.imread('/Users/sarahlu/Desktop/CVData/brick2_original.png', cv2.IMREAD_GRAYSCALE)
