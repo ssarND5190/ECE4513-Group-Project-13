@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 def High_Pass_Filter(img,radius = 100):
     # get the size
     rows, cols = img.shape
-
     # fft
     dft = np.fft.fft2(img)
     dft_shift = np.fft.fftshift(dft)
@@ -71,7 +70,6 @@ def generate_normal_map(img, strength = 3.0):
     return normal_map
 
 def getNormal(img):
-    img = High_Pass_Filter(img)
     img = generate_normal_map(img)
     return img
 
