@@ -77,11 +77,11 @@ def getNormal_sfs(img,light_dir = [0,0,1]):
     normal = optimize_gradient(I_small, light_dir, lambda_smooth=0.1, maxiter=10)
     return normal
 
-if __name__ == "__main__":
-    img = cv2.imread('/Users/sarahlu/Desktop/CVData/sfs_ball.jpg')
-    normal = getNormal_sfs(img)
-    cv2.imshow("normal map", normal)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+# if __name__ == "__main__":
+#     img = cv2.imread('/Users/sarahlu/Desktop/CVData/sfs_ball.jpg')
+#     normal = getNormal_sfs(img)
+#     cv2.imshow("normal map", normal)
+#     cv2.waitKey(0)
+#     cv2.destroyAllWindows()
 
 
