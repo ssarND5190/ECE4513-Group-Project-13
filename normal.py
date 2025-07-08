@@ -37,6 +37,36 @@ def generate_height_map(img):
     height_map = height_map.astype(np.uint8)
     return height_map
 
+def retinex_decomposition(img, sigma=15):
+    """
+    Retinex decomposition: img = R * S
+    S: grandient for calculating normal map
+    R: texture 
+    """
+    # 防止 log(0)
+    img = img.astype(np.float32) / 255.0
+    img[img <= 0] = 1e-4
+
+    if img.shape[2] == 3:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # log(I)
+    log_I = np.log(img)
+
+    # log(S): 平滑版本
+    log_S = cv2.GaussianBlur(log_I, (15,15), 5,5)
+
+    # log(R) texture
+    log_R = log_I - log_S
+
+    # 回到原始域
+    S = np.exp(log_S)
+    R = np.exp(log_R)
+
+    S = np.clip(S * 255.0, 0, 255).astype(np.uint8)
+    S = cv2.equalizeHist(S)
+    return S
+
 def generate_normal_map(img, strength = 3.0):
 
     if img is None:
@@ -70,8 +100,9 @@ def generate_normal_map(img, strength = 3.0):
     return normal_map
 
 def getNormal(img):
-    img = generate_normal_map(img)
-    return img
+    img = retinex_decomposition(img)
+    normal_map = generate_normal_map(img)
+    return normal_map
 
 # if __name__ == "__main__":
 #     img = cv2.imread('/Users/sarahlu/Desktop/CVData/brick2_original.png', cv2.IMREAD_GRAYSCALE)
