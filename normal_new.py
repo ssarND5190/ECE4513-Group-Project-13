@@ -2,15 +2,18 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
+#一种特殊的高度推算方法，在单光源平行于平面时有较好效果，但是非常容易受干扰（如垂直于光源的条纹）
+#目前光源方向暂定为正上方，还不能调节
+
 def getnormal(img, rotation, len):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    average = np.average(gray)
+    #亮度转高度图
     hight1 = np.copy(gray)
+    #亮度累积高度图
     hight2 = np.zeros_like(gray).astype(np.int32)
     for x in range(img.shape[1]):
-        hight2[0,x]=gray[0, x] - average
-    for y in range(1, img.shape[0]):
-        for x in range(img.shape[1]):
+        average = np.average(gray[:,x])
+        for y in range(1, img.shape[0]):
             hight2[y,x]=hight2[y-1, x]+ gray[y, x] - average
     for x in range(img.shape[1]):
         min2 = hight2[:,x].min()
@@ -19,8 +22,9 @@ def getnormal(img, rotation, len):
         if max2 > 0:
             hight2[:,x] = hight2[:,x] * 255.0 / max2
     hight2 = hight2.astype(np.uint8)
-    hight2_blurY = cv2.GaussianBlur(hight2,(1,75),0)
-    hight2_blurX = cv2.GaussianBlur(hight2,(95,1),0)
+    #径向模糊以平滑结果
+    hight2_blurY = cv2.GaussianBlur(hight2,(1,25),0)
+    hight2_blurX = cv2.GaussianBlur(hight2,(55,1),0)
     positive = np.zeros_like(hight2)
     negative = np.zeros_like(hight2)
     output_gray = np.zeros_like(hight2)
@@ -35,7 +39,7 @@ def getnormal(img, rotation, len):
             pixel = int(hight2_blurX[i, j]) + int(positive[i, j]) - int(negative[i, j])
             pixel = np.clip(pixel, 0, 255).astype(np.uint8)
             output_gray[i, j] = pixel
-
+    output_gray=cv2.equalizeHist(output_gray)
     output = cv2.cvtColor(output_gray, cv2.COLOR_GRAY2BGR)
     return output
 
