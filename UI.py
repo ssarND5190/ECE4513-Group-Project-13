@@ -7,8 +7,11 @@ def nothing(x):
 
 # Dot initial position (center of img_tex_show)
 dots_pos = []  # List to store positions of dots
-dot_radius = 8
+dot_radius = 5
 dot_color = [(255, 144, 55), (0, 255, 0), (0, 0, 255), (255, 0, 0)]  # Different colors for different dots
+
+#光源位置 (极坐标 r, theta)
+sun_pos = [0.0,0.0]
 
 def mouse_callback(event, x, y, flag, param):
     if event == cv2.EVENT_LBUTTONDOWN:
@@ -53,4 +56,6 @@ def display_images(img1, img2, img3):
     # Draw the dot on the combined image
     for i, pos in enumerate(dots_pos):
         cv2.circle(combined_image, (pos[0], pos[1]), dot_radius, dot_color[i % len(dot_color)], -1)
+    cv2.line(combined_image, (180,180), (int(180+sun_pos[0]*np.cos(sun_pos[1])), int(180-sun_pos[0]*np.sin(sun_pos[1]))), (128,255,255))
+    cv2.circle(combined_image, (int(180+sun_pos[0]*np.cos(sun_pos[1])), int(180-sun_pos[0]*np.sin(sun_pos[1]))), 8, (128,255,255), -1)
     cv2.imshow('window', combined_image)

@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import UI
 import normal
 import filter
+import normal_new
 
 cv2.namedWindow('window')
 # Source Image
@@ -33,14 +34,12 @@ cv2.setMouseCallback('window', UI.mouse_callback)
 
 # These bars are not used currently
 cv2.createTrackbar('bar1','window',0,255,UI.nothing)
-cv2.createTrackbar('bar2','window',0,255,UI.nothing)
-cv2.createTrackbar('bar3','window',0,255,UI.nothing)
+cv2.createTrackbar('bar2','window',0,100,UI.nothing)
+cv2.createTrackbar('bar3','window',0,359,UI.nothing)
 
 def processImage():
     global img_src, img_tex, img_normal, tex_zoom
     value1 = cv2.getTrackbarPos('bar1','window')
-    value2 = cv2.getTrackbarPos('bar2','window')
-    value3 = cv2.getTrackbarPos('bar3','window')
 
     if len(UI.dots_pos) == 4:
         # 将UI.dots_pos中的点从展示图像坐标反向映射回原图坐标
@@ -65,14 +64,14 @@ def processImage():
         warped = cv2.warpPerspective(img_src, M, (512, 512))
 
         # 把视角转换后的纹理用filer进行光照归一化
-        img_tex = filter.filter4(warped, value1)
+        #img_tex = filter.filter4(warped, value1)
 
 
         # 内部纹理处理时，我们用的是512像素，输出前要压缩一下，这里计算压缩率
         tex_zoom = 360.0 / 512
 
         # 理论上normal是根据texture图生成的，但filter未完成时可以暂时用原图
-        img_normal = normal.getNormal(img_src)
+        img_normal = normal_new.getNormal(img_src, UI.sun_pos[1], UI.sun_pos[0]/100)
     else:
         print("Please select exactly four points on the source image.")
 
@@ -86,6 +85,10 @@ while True:
         for i, pos in enumerate(UI.dots_pos):
             print(f"  Point {i+1}: {pos}")  #打印点的坐标
         canProcess = False
+    value2 = cv2.getTrackbarPos('bar2','window')
+    value3 = cv2.getTrackbarPos('bar3','window')
+    UI.sun_pos[0]=value2
+    UI.sun_pos[1]=value3* np.pi / 180
     img_tex_show = cv2.resize(img_tex, (int(tex_x * tex_zoom), int(tex_y * tex_zoom)), interpolation=cv2.INTER_CUBIC)
     img_normal_show = cv2.resize(img_normal, (int(normal_x * normal_zoom), int(normal_y * normal_zoom)), interpolation=cv2.INTER_CUBIC)
     UI.display_images(img_src_show, img_tex_show, img_normal_show)
